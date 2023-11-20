@@ -3,7 +3,7 @@
     "dataProvided": {
       "entities": [
         {
-          "id": "urn:ngsi-ld:Ponto:0.4", "type": "SensorIot"
+          "id": "urn:ngsi-ld:Ponto:0.6", "type": "SensorIot"
         }
       ],
       "attrs": [ "on", "off" ]
