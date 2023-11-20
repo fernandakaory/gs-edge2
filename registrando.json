@@ -1,0 +1,15 @@
+{
+    "description": "Sensor Commands",
+    "dataProvided": {
+      "entities": [
+        {
+          "id": "urn:ngsi-ld:Ponto:0.4", "type": "SensorIot"
+        }
+      ],
+      "attrs": [ "on", "off" ]
+    },
+    "provider": {
+      "http": {"url": "http://{{url}}:4041"},
+      "legacyForwarding": true
+    }
+  }

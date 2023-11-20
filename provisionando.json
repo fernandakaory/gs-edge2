@@ -1,0 +1,23 @@
+{
+    "devices": [
+      {
+        "device_id": "ponto0.4",
+        "entity_name": "urn:ngsi-ld:Ponto:0.4",
+        "entity_type": "SensorIot",
+        "protocol": "PDI-IoTA-UltraLight",
+        "transport": "MQTT",
+        "commands": [
+          {"name": "on","type": "command"},
+          {"name": "off","type": "command"}
+        ],
+        "attributes": [
+          {"object_id": "t", "name": "temperature", "type":"Float"},
+          {"object_id": "m", "name": "moviment", "type":"Text"},
+          {"object_id": "a", "name": "temperature_time", "type":"Text"},
+          {"object_id": "b", "name": "moviment_time", "type":"Text"},
+          {"object_id": "c", "name": "temperature_date", "type":"Text"},
+          {"object_id": "d", "name": "moviment_date", "type":"Text"}
+        ]
+      }
+    ]
+  }
