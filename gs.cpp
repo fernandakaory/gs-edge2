@@ -11,17 +11,21 @@ LiquidCrystal_I2C LCD = LiquidCrystal_I2C(0x27, 16, 2);
 #define NTP_SERVER     "a.ntp.br"
 #define UTC_OFFSET     0
 #define UTC_OFFSET_DST 0
- 
+
+//definos das variaveis de batimento cardiaco
+#define PULSE_PER_BEAT    1           // Número de pulsos por batimento cardíaco
+#define INTERRUPT_PIN     5           // Pino de interrupção
+#define SAMPLING_INTERVAL 1000        // Intervalo de amostragem em milissegundos
 
 //defines de id mqtt e tópicos para publicação e subscribe denominado TEF(Telemetria e Monitoramento de Equipamentos)
-#define TOPICO_SUBSCRIBE    "/TEF/ponto0.4/cmd"        //tópico MQTT de escuta
-#define TOPICO_PUBLISH      "/TEF/ponto0.4/attrs"      //tópico MQTT de envio de informações para Broker
-#define TOPICO_PUBLISH_2    "/TEF/ponto0.4/attrs/t"    //tópico de envio da temperatura
-#define TOPICO_PUBLISH_3    "/TEF/ponto0.4/attrs/m"    //tópico de envio do movimento
-#define TOPICO_PUBLISH_4    "/TEF/ponto0.4/attrs/a"    //tópico de envio do horário da mudança de temperatura
-#define TOPICO_PUBLISH_5    "/TEF/ponto0.4/attrs/b"    //tópico de envio do horário da captura de movimento
+#define TOPICO_SUBSCRIBE    "/TEF/ponto0.6/cmd"        //tópico MQTT de escuta
+#define TOPICO_PUBLISH      "/TEF/ponto0.6/attrs"      //tópico MQTT de envio de informações para Broker
+#define TOPICO_PUBLISH_2    "/TEF/ponto0.6/attrs/t"    //tópico de envio da temperatura
+#define TOPICO_PUBLISH_3    "/TEF/ponto0.6/attrs/h"    //tópico de envio do batimento
+#define TOPICO_PUBLISH_4    "/TEF/ponto0.6/attrs/a"    //tópico de envio do horário da mudança de temperatura
+#define TOPICO_PUBLISH_5    "/TEF/ponto0.6/attrs/b"    //tópico de envio do horário dos batimentos
                          
-#define ID_MQTT  "fiware_0.4"      //id mqtt (para identificação de sessão)
+#define ID_MQTT  "fiware_0.6"      //id mqtt (para identificação de sessão)
                         
                                 
 // WIFI
@@ -51,27 +55,38 @@ void InitOutput(void);
 /* 
  *  Implementações das funções
  */
-int valor = 0;
-const int pir = 34;
-int led=4;
 float lastTemperature = 0.0;
-bool lastMotionState = false;
 #define DHTPIN 15           // Pino de dados do sensor DHT11
 #define DHTTYPE DHT22       // Tipo do sensor DHT (DHT11)
 DHT dht(DHTPIN, DHTTYPE);
 
-void setup() 
-{
-    //inicializações:
-    InitOutput();
-    initSerial();
-    initWiFi();
-    initMQTT();
-    delay(5000);
-    MQTT.publish(TOPICO_PUBLISH, "s|on");
-    initLCD();
-    pinMode(led, OUTPUT);
+volatile uint16_t pulse;              // Variável que será incrementada na interrupção
+uint16_t count;                       // Variável para armazenar o valor atual de pulse
 
+float heartRate;                      // Frequência cardíaca calculada a partir de count
+
+portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;  // Mutex para garantir acesso seguro a pulse
+
+void IRAM_ATTR HeartRateInterrupt() {
+  portENTER_CRITICAL_ISR(&mux);  // Entra em uma seção crítica de interrupção
+  pulse++;  // Incrementa a variável pulse de maneira segura
+  portEXIT_CRITICAL_ISR(&mux);   // Sai da seção crítica de interrupção
+}
+
+void setup() {
+
+  //inicializações:
+  InitOutput();
+  initSerial();
+  initWiFi();
+  initMQTT();
+  delay(5000);
+  MQTT.publish(TOPICO_PUBLISH, "s|on");
+  initLCD();
+  Serial.begin(115200);
+
+  pinMode(INTERRUPT_PIN, INPUT);
+  attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), HeartRateInterrupt, RISING);  // Configura a interrupção no pino
 }
   
 //Função: inicializa comunicação serial com baudrate 115200 (para fins de monitorar no terminal serial 
@@ -86,7 +101,7 @@ void initSerial()
 
 void initLCD()
 {
-  LCD.init();
+    LCD.init();
     LCD.backlight();
     LCD.setCursor(0, 0);
     LCD.print("Connecting to ");
@@ -160,13 +175,13 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length)
 
     //toma ação dependendo da string recebida:
    // Verifica a mensagem recebida e ativa ou desativa o sensor infravermelho
-    if (msg.equals("ponto0.4@on|")) {
+    if (msg.equals("ponto0.6@on|")) {
        // digitalWrite(sensor1, LOW); // Ativa o sensor (pino D4)
         EstadoSaida = '1';
         sensorAtivo = true;
     }
 
-    if (msg.equals("ponto0.4@off|")) {
+    if (msg.equals("ponto0.6@off|")) {
        // digitalWrite(sensor1, HIGH); // Desativa o sensor (pino D4)
         EstadoSaida = '0';
         sensorAtivo = false;
@@ -304,16 +319,12 @@ void printLocalTime() {
   LCD.println(&timeinfo, "%d/%m/%Y   %Z");
 }
 
-//programa principal
-void loop() 
-{     
+void loop() {
+    HeartRate();
     printLocalTime();
     delay(250);
     char temperatureBuffer[6];
-    char lastChangeTime1[20];
-    char lastChangeTime2[20];
 
-    char timeBuffer[20];
     char timeBuffer2[20];
     //garante funcionamento das conexões WiFi e ao broker MQTT
     VerificaConexoesWiFIEMQTT();
@@ -323,7 +334,7 @@ void loop()
 
     // Leitura da temperatura e umidade
     float temperature = dht.readTemperature();
-    valor = digitalRead(pir);
+  
 
     // Verifica se a temperatura mudou
     if (temperature != lastTemperature) {
@@ -336,27 +347,32 @@ void loop()
         lastTemperature = temperature;
     
     }
-
-    // Verifica se a temperatura é maior ou igual a 37 graus Celsius
-    if (temperature >= 37.0 && digitalRead(led) == LOW) {
-        digitalWrite(led, HIGH);
-    } else if (temperature < 37.0 && digitalRead(led) == HIGH) {
-        digitalWrite(led, LOW);
-    }
-
-    // Verifica se o sensor PIR detectou movimento
-    if (valor == HIGH && !lastMotionState) {
-        lastMotionState = true;
-        digitalWrite(led, HIGH);
-        strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
-        MQTT.publish(TOPICO_PUBLISH_3, "PACIENTE SE MOVIMENTOU");
-        MQTT.publish(TOPICO_PUBLISH_5, timeBuffer);
-        lastMotionState = false;
-        digitalWrite(led, LOW);
-
-     }
-
+ 
     //keep-alive da comunicação com broker MQTT
     MQTT.loop();
     delay(100);
+}
+
+void HeartRate() {
+  char heartRateBuffer[6];
+  char timeBuffer[20];
+
+  static unsigned long startTime;
+  if (millis() - startTime < SAMPLING_INTERVAL) return;   // Intervalo de amostragem
+  startTime = millis();
+
+  portENTER_CRITICAL(&mux);  // Entra em uma seção crítica
+  count = pulse;  // Salva o valor atual de pulse e zera pulse
+  pulse = 0;
+  portEXIT_CRITICAL(&mux);   // Sai da seção crítica
+
+  // Ajuste na fórmula para mapear a faixa de 0 Hz a 220 Hz para a frequência cardíaca em BPM
+  heartRate = map(count, 0, 220, 0, 220);  // Mapeia a contagem para a faixa desejada
+  dtostrf(heartRate, 4, 2, heartRateBuffer);
+  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
+
+  MQTT.publish(TOPICO_PUBLISH_3, heartRateBuffer);
+  MQTT.publish(TOPICO_PUBLISH_5, timeBuffer);
+
+  Serial.println("Heart Rate: " + String(heartRate, 2) + " BPM");
 }
