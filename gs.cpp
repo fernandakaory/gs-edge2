@@ -48,9 +48,9 @@ void initSerial();
 void initWiFi();
 void initMQTT();
 void reconectWiFi(); 
-void mqtt_callback(char* topic, byte* payload, unsigned int length);
+// void mqtt_callback(char* topic, byte* payload, unsigned int length);
 void VerificaConexoesWiFIEMQTT(void);
-void InitOutput(void);
+// void InitOutput(void);
  
 /* 
  *  Implementações das funções
@@ -76,7 +76,6 @@ void IRAM_ATTR HeartRateInterrupt() {
 void setup() {
 
   //inicializações:
-  InitOutput();
   initSerial();
   initWiFi();
   initMQTT();
@@ -148,45 +147,7 @@ void initWiFi()
 void initMQTT() 
 {
     MQTT.setServer(BROKER_MQTT, BROKER_PORT);   //informa qual broker e porta deve ser conectado
-    MQTT.setCallback(mqtt_callback);            //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
-}
-  
-// Função: função de callback 
-//        esta função é chamada toda vez que uma informação de 
-//        um dos tópicos subescritos chega)
-// Parâmetros: nenhum
-// Retorno: nenhum
-bool sensorAtivo = false;
-void mqtt_callback(char* topic, byte* payload, unsigned int length) 
-{
-    String msg;
-     
-    //obtem a string do payload recebido
-    for(int i = 0; i < length; i++) 
-    {
-       char c = (char)payload[i];
-       msg += c;
-    }
-    
-    Serial.print("- Mensagem recebida: ");
-    Serial.println(msg);
-    
-    // Variável de controle para ativar/desativar o sensor
-
-    //toma ação dependendo da string recebida:
-   // Verifica a mensagem recebida e ativa ou desativa o sensor infravermelho
-    if (msg.equals("ponto0.6@on|")) {
-       // digitalWrite(sensor1, LOW); // Ativa o sensor (pino D4)
-        EstadoSaida = '1';
-        sensorAtivo = true;
-    }
-
-    if (msg.equals("ponto0.6@off|")) {
-       // digitalWrite(sensor1, HIGH); // Desativa o sensor (pino D4)
-        EstadoSaida = '0';
-        sensorAtivo = false;
-    }
-     
+   // MQTT.setCallback(mqtt_callback);            //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
 }
   
 //Função: reconecta-se ao broker MQTT (caso ainda não esteja conectado ou em caso de a conexão cair)
@@ -250,41 +211,6 @@ void VerificaConexoesWiFIEMQTT(void)
      
      reconectWiFi(); //se não há conexão com o WiFI, a conexão é refeita
 }
- 
-//Função: envia ao Broker o estado atual do output 
-//Parâmetros: nenhum
-//Retorno: nenhum
-void EnviaEstadoOutputMQTT(void)
-{
-    if (EstadoSaida == '1')
-    {
-      MQTT.publish(TOPICO_PUBLISH, "s|on");
-    }
-    if (EstadoSaida == '0')
-    {
-      MQTT.publish(TOPICO_PUBLISH, "s|off");
-    }
-}
- 
-//Função: inicializa o output em nível lógico baixo
-//Parâmetros: nenhum
-//Retorno: nenhum
-void InitOutput(void)
-{
-    //IMPORTANTE: o Led já contido na placa é acionado com lógica invertida (ou seja,
-    //enviar HIGH para o output faz o Led apagar / enviar LOW faz o Led acender)
-    pinMode(D4, OUTPUT);
-    digitalWrite(D4, HIGH);
-    
-    boolean toggle = false;
-
-    for(int i = 0; i <= 10; i++)
-    {
-        toggle = !toggle;
-        digitalWrite(D4,toggle);
-        delay(200);           
-    }
-}
 
 //configura figura de spinner no lcd
 void spinner() {
@@ -328,15 +254,12 @@ void loop() {
     char timeBuffer2[20];
     //garante funcionamento das conexões WiFi e ao broker MQTT
     VerificaConexoesWiFIEMQTT();
- 
-    //envia o status de todos os outputs para o Broker no protocolo esperado
-    EnviaEstadoOutputMQTT();
 
     // Leitura da temperatura e umidade
     float temperature = dht.readTemperature();
   
 
-    // Verifica se a temperatura mudou
+    // Verifica se a temperatura mudou e envia 
     if (temperature != lastTemperature) {
         Serial.print("Temperatura: ");
         Serial.println(temperature);
