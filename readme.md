@@ -7,6 +7,9 @@
 - Fernanda Kaory Saito – RM 551104
 - Lana Giulia Auada Leite – RM 551143
 
+## Link da simulação no Wokwi
+https://wokwi.com/projects/381930932376382465
+
 ## Saúde e tecnologia
 A saúde é fundamental para o bem-estar e a qualidade de vida de cada indivíduo. Saúde não se limita apenas à ausência de doenças, mas engloba um estado de completo bem-estar físico, mental e social. Essa ainda é uma questão de constante desenvolvimento e aprimoração, tendo em vista que a tecnologia avança cada vez mais, a saúde, como algo primado, também avança em pró de uma melhoria que atinja a todos. 
 Atualmente já podemos contar com diversos serviços oferecidos na internet, como consultas online, acompanhamento médico remoto, exames feitos da própria residência do paciente etc. Todavia, ainda existem questões a serem supridas e melhoradas. Existe uma alta demanda pelo serviço da área da saúde e, consequentemente, é preciso uma boa e grande estrutura para lidar com essa demanda. 
