@@ -48,6 +48,9 @@ Dessa forma, nossa plataforma não apenas oferece uma maneira conveniente de ace
 e eficaz para o cuidado com a saúde.</p>
 
 ## Recursos necessários para implementação da solução
+<div align="center">
+  <img src="https://github.com/fernandakaory/gs-edge2/assets/126582859/ea62233a-8d31-4f4e-8f86-4b610dd76d58" width="600" >
+</div>
 <h3>O Hardware deste projeto, é composto essencialmente por: </h3>
 Uma placa ESP 32, que conta com dois núcleos de 32 bits, responsável por permitir a conexão ao wifi ou blutooth, garantindo, assim, a implementação da Internet das Coisas no nosso protótipo.
 
@@ -75,7 +78,6 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 
 <div align="center">
   <img src="https://github.com/fernandakaory/gs-edge2/assets/126582859/2198455c-be5d-4d0b-8d7f-f610aeefe1d8" width="600" >
-
 </div>
 
 
@@ -85,6 +87,7 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 - Postman
 - Em caso de construção física, uma ESP 32 , sensor DHT22, display lcd I2C e um gerador de pulso
 - Em caso de prototipação virtual, as ferramentas podem ser encontradas e usadas no <a href="https://wokwi.com/"> Wokwi </a>
+- Ambiente de desenvolvimento como Arduino IDE ou Wokwi
 - Conectividade Wifi ou blutooth
 - Ambiente front-end, como o <a href=https://freeboard.io/> freeboard </a>
   
@@ -96,8 +99,8 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 5. Importar as collection para o Fiware e executar os métodos HTTP de Health Check
 6. Provisionar os sensores como dispositivos virtuais (como no arquivo json acima), definindo id, protocolo de comunicação, comandos e atributos.
 7. Registrar esses dispositivos  (como no arquivo json acima).
-8. Montar os sensores físicos na ESP 32.
-9. Montar o código desses sensores para enviar por MQTT os dados.
+8. Montar os sensores físicos na ESP 32 de acordo com a imagem acima:
+9. Montar o código desses sensores para enviar por MQTT os dados. (importar também bibliotecas PubSubClient, LiquidCrystal I2C, DHT22 e DHT sensor library)
 10. Realizar a subscrição e métodos GET para receber os dados desejados.
 11. Configurar <a href=https://freeboard.io/> freeboard </a>
 12. Configurar os dashboards e gráficos desejados
