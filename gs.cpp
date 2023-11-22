@@ -244,6 +244,31 @@ void printLocalTime() {
   LCD.println(&timeinfo, "%d/%m/%Y   %Z");
 }
 
+//função dos batimentos cardíacos
+void HeartRate() {
+  char heartRateBuffer[6];
+  char timeBuffer[20];
+
+  static unsigned long startTime;
+  if (millis() - startTime < SAMPLING_INTERVAL) return;   // Intervalo de amostragem
+  startTime = millis();
+
+  portENTER_CRITICAL(&mux);  // Entra em uma seção crítica
+  count = pulse;  // Salva o valor atual de pulse e zera pulse
+  pulse = 0;
+  portEXIT_CRITICAL(&mux);   // Sai da seção crítica
+
+  // Ajuste na fórmula para mapear a faixa de 0 Hz a 220 Hz para a frequência cardíaca em BPM
+  heartRate = map(count, 0, 220, 0, 220);  // Mapeia a contagem para a faixa desejada
+  dtostrf(heartRate, 4, 2, heartRateBuffer);
+  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
+
+  MQTT.publish(TOPICO_PUBLISH_3, heartRateBuffer);
+  MQTT.publish(TOPICO_PUBLISH_5, timeBuffer);
+
+  Serial.println("Heart Rate: " + String(heartRate, 2) + " BPM");
+}
+
 //programa principal
 void loop() {
   //chama funções do batimento cardíoco e do horário utc
@@ -276,29 +301,4 @@ void loop() {
     //keep-alive da comunicação com broker MQTT
     MQTT.loop();
     delay(100);
-}
-
-//função dos batimentos cardíacos
-void HeartRate() {
-  char heartRateBuffer[6];
-  char timeBuffer[20];
-
-  static unsigned long startTime;
-  if (millis() - startTime < SAMPLING_INTERVAL) return;   // Intervalo de amostragem
-  startTime = millis();
-
-  portENTER_CRITICAL(&mux);  // Entra em uma seção crítica
-  count = pulse;  // Salva o valor atual de pulse e zera pulse
-  pulse = 0;
-  portEXIT_CRITICAL(&mux);   // Sai da seção crítica
-
-  // Ajuste na fórmula para mapear a faixa de 0 Hz a 220 Hz para a frequência cardíaca em BPM
-  heartRate = map(count, 0, 220, 0, 220);  // Mapeia a contagem para a faixa desejada
-  dtostrf(heartRate, 4, 2, heartRateBuffer);
-  strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
-
-  MQTT.publish(TOPICO_PUBLISH_3, heartRateBuffer);
-  MQTT.publish(TOPICO_PUBLISH_5, timeBuffer);
-
-  Serial.println("Heart Rate: " + String(heartRate, 2) + " BPM");
 }
