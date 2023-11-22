@@ -7,6 +7,9 @@
 - Fernanda Kaory Saito – RM 551104
 - Lana Giulia Auada Leite – RM 551143
 
+## Link da simulação no Wokwi
+https://wokwi.com/projects/381930932376382465
+
 ## Saúde e tecnologia
 A saúde é fundamental para o bem-estar e a qualidade de vida de cada indivíduo. Saúde não se limita apenas à ausência de doenças, mas engloba um estado de completo bem-estar físico, mental e social. Essa ainda é uma questão de constante desenvolvimento e aprimoração, tendo em vista que a tecnologia avança cada vez mais, a saúde, como algo primado, também avança em pró de uma melhoria que atinja a todos. 
 Atualmente já podemos contar com diversos serviços oferecidos na internet, como consultas online, acompanhamento médico remoto, exames feitos da própria residência do paciente etc. Todavia, ainda existem questões a serem supridas e melhoradas. Existe uma alta demanda pelo serviço da área da saúde e, consequentemente, é preciso uma boa e grande estrutura para lidar com essa demanda. 
@@ -28,6 +31,10 @@ Atualmente já podemos contar com diversos serviços oferecidos na internet, com
   sejam eles conveniados ou clínicas particulares. Através da simplificação e aprimoramento desse processo de comunicação, buscamos aprimorar também o agendamento direto entre o usuário e o local de serviço, proporcionando
   maior praticidade.</p>
 
+  <P>Ao utilizar nosso aplicativo, os usuários poderão solicitar exames e ter acesso imediato a todas as clínicas parceiras, bem como às datas e horários disponíveis. Além disso, aqueles que optarem por utilizar nossa solução terão a opção de vincular sua conta Ponto+ à conta de seu plano de saúde, caso possuam uma.</P>
+
+<p>Para garantir uma comunicação eficaz entre os futuros pacientes e os locais de exame, também disponibilizaremos um chat. Além disso, nosso aplicativo permitirá que o usuário insira e consulte os resultados dos exames, proporcionando uma experiência de cuidado com a saúde mais integrada e conveniente.</p>
+
 <p>Além disso, o nosso aplicativo será projetado para aprimorar todas as etapas envolvidas no contexto mencionado, incluindo a solicitação do pedido médico, acompanhamento médico e acesso aos resultados de exames. 
   Dessa forma, buscamos criar uma solução abrangente que não apenas simplifique a interação entre o usuário e os serviços de saúde, mas também aprimore todos os aspectos relacionados a esse processo, proporcionando uma 
   experiência mais eficiente e satisfatória para todos os envolvidos.</p>
@@ -45,6 +52,9 @@ Dessa forma, nossa plataforma não apenas oferece uma maneira conveniente de ace
 e eficaz para o cuidado com a saúde.</p>
 
 ## Recursos necessários para implementação da solução
+<div align="center">
+  <img src="https://github.com/fernandakaory/gs-edge2/assets/126582859/ea62233a-8d31-4f4e-8f86-4b610dd76d58" width="600" >
+</div>
 <h3>O Hardware deste projeto, é composto essencialmente por: </h3>
 Uma placa ESP 32, que conta com dois núcleos de 32 bits, responsável por permitir a conexão ao wifi ou blutooth, garantindo, assim, a implementação da Internet das Coisas no nosso protótipo.
 
@@ -72,7 +82,6 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 
 <div align="center">
   <img src="https://github.com/fernandakaory/gs-edge2/assets/126582859/2198455c-be5d-4d0b-8d7f-f610aeefe1d8" width="600" >
-
 </div>
 
 
@@ -82,6 +91,7 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 - Postman
 - Em caso de construção física, uma ESP 32 , sensor DHT22, display lcd I2C e um gerador de pulso
 - Em caso de prototipação virtual, as ferramentas podem ser encontradas e usadas no <a href="https://wokwi.com/"> Wokwi </a>
+- Ambiente de desenvolvimento como Arduino IDE ou Wokwi
 - Conectividade Wifi ou blutooth
 - Ambiente front-end, como o <a href=https://freeboard.io/> freeboard </a>
   
@@ -93,8 +103,8 @@ A base front-end que está sendo utilizada neste projeto na fase atual, é, basi
 5. Importar as collection para o Fiware e executar os métodos HTTP de Health Check
 6. Provisionar os sensores como dispositivos virtuais (como no arquivo json acima), definindo id, protocolo de comunicação, comandos e atributos.
 7. Registrar esses dispositivos  (como no arquivo json acima).
-8. Montar os sensores físicos na ESP 32.
-9. Montar o código desses sensores para enviar por MQTT os dados.
+8. Montar os sensores físicos na ESP 32 de acordo com a imagem acima:
+9. Montar o código desses sensores para enviar por MQTT os dados. (importar também bibliotecas PubSubClient, LiquidCrystal I2C, DHT22 e DHT sensor library)
 10. Realizar a subscrição e métodos GET para receber os dados desejados.
 11. Configurar <a href=https://freeboard.io/> freeboard </a>
 12. Configurar os dashboards e gráficos desejados
