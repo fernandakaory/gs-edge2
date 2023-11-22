@@ -97,7 +97,7 @@ void initSerial()
     Serial.begin(115200);
 }
  
-
+//função para inciar o LCD
 void initLCD()
 {
     LCD.init();
@@ -147,7 +147,6 @@ void initWiFi()
 void initMQTT() 
 {
     MQTT.setServer(BROKER_MQTT, BROKER_PORT);   //informa qual broker e porta deve ser conectado
-   // MQTT.setCallback(mqtt_callback);            //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
 }
   
 //Função: reconecta-se ao broker MQTT (caso ainda não esteja conectado ou em caso de a conexão cair)
@@ -223,7 +222,7 @@ void spinner() {
   }
 }
 
-//função para exibição da data e horério utc
+//função para exibição da data e horário utc
 struct tm timeinfo;
 void printLocalTime() {
   if (!getLocalTime(&timeinfo)) {
@@ -245,21 +244,24 @@ void printLocalTime() {
   LCD.println(&timeinfo, "%d/%m/%Y   %Z");
 }
 
+//programa principal
 void loop() {
+  //chama funções do batimento cardíoco e do horário utc
     HeartRate();
     printLocalTime();
     delay(250);
-    char temperatureBuffer[6];
 
+    //definição dos buffers para os tópicos
+    char temperatureBuffer[6];
     char timeBuffer2[20];
     //garante funcionamento das conexões WiFi e ao broker MQTT
     VerificaConexoesWiFIEMQTT();
 
-    // Leitura da temperatura e umidade
+    // Leitura da temperatura
     float temperature = dht.readTemperature();
   
 
-    // Verifica se a temperatura mudou e envia 
+    // Verifica se a temperatura mudou para enviar
     if (temperature != lastTemperature) {
         Serial.print("Temperatura: ");
         Serial.println(temperature);
@@ -276,6 +278,7 @@ void loop() {
     delay(100);
 }
 
+//função dos batimentos cardíacos
 void HeartRate() {
   char heartRateBuffer[6];
   char timeBuffer[20];
