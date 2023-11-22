@@ -31,6 +31,10 @@ Atualmente já podemos contar com diversos serviços oferecidos na internet, com
   sejam eles conveniados ou clínicas particulares. Através da simplificação e aprimoramento desse processo de comunicação, buscamos aprimorar também o agendamento direto entre o usuário e o local de serviço, proporcionando
   maior praticidade.</p>
 
+  <P>Ao utilizar nosso aplicativo, os usuários poderão solicitar exames e ter acesso imediato a todas as clínicas parceiras, bem como às datas e horários disponíveis. Além disso, aqueles que optarem por utilizar nossa solução terão a opção de vincular sua conta Ponto+ à conta de seu plano de saúde, caso possuam uma.</P>
+
+<p>Para garantir uma comunicação eficaz entre os futuros pacientes e os locais de exame, também disponibilizaremos um chat. Além disso, nosso aplicativo permitirá que o usuário insira e consulte os resultados dos exames, proporcionando uma experiência de cuidado com a saúde mais integrada e conveniente.</p>
+
 <p>Além disso, o nosso aplicativo será projetado para aprimorar todas as etapas envolvidas no contexto mencionado, incluindo a solicitação do pedido médico, acompanhamento médico e acesso aos resultados de exames. 
   Dessa forma, buscamos criar uma solução abrangente que não apenas simplifique a interação entre o usuário e os serviços de saúde, mas também aprimore todos os aspectos relacionados a esse processo, proporcionando uma 
   experiência mais eficiente e satisfatória para todos os envolvidos.</p>
